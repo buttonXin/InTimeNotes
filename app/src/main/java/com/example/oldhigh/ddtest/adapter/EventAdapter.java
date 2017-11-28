@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dopool.proutil.base.BaseAdapterRV;
 import com.example.oldhigh.ddtest.R;
 import com.example.oldhigh.ddtest.bean.NewEventBean;
 

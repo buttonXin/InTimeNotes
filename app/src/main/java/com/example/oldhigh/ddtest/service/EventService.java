@@ -12,12 +12,9 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.dopool.proutil.util.ToastUtil;
 import com.example.oldhigh.ddtest.bean.NewEventBean;
 import com.example.oldhigh.ddtest.util.L;
 import com.example.oldhigh.ddtest.util.RealmUtil;
-
-import io.realm.Realm;
 
 /**
  * Created by oldhigh on 2017/11/16.
@@ -125,7 +122,6 @@ public class EventService extends Service {
             }
         } catch (RemoteException e) {
             e.printStackTrace();
-            ToastUtil.showTsShort(getBaseContext() , "发送粘贴板内容失败");
         }
     }
 

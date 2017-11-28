@@ -1,27 +1,21 @@
 package com.example.oldhigh.ddtest.activity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.dopool.proutil.base.BaseActivity;
-import com.dopool.proutil.base.BaseAdapterRV;
-import com.dopool.proutil.util.ToastUtil;
 import com.example.oldhigh.ddtest.R;
+import com.example.oldhigh.ddtest.adapter.BaseAdapterRV;
 import com.example.oldhigh.ddtest.adapter.EventAdapter;
 import com.example.oldhigh.ddtest.bean.NewEventBean;
 import com.example.oldhigh.ddtest.service.EventService;
 import com.example.oldhigh.ddtest.util.L;
 import com.example.oldhigh.ddtest.util.RealmUtil;
-import com.example.oldhigh.ddtest.util.SortUtil;
-
-import java.util.Collections;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +26,7 @@ import io.realm.RealmResults;
  * Created by oldhigh on 2017/11/26.
  */
 
-public class EventActivity extends BaseActivity{
+public class EventActivity extends AppCompatActivity{
 
     @BindView(R.id.recycler_event)
     RecyclerView mRecycler;
@@ -98,4 +92,11 @@ public class EventActivity extends BaseActivity{
                 .show();
     }
 
+    /**
+     *
+     * @param text
+     */
+    public void cuo(String text){
+
+    }
 }
