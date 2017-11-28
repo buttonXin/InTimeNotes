@@ -1,0 +1,29 @@
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+/**
+ * 当前的是2.3.3 的版本AS ，所以必须是25.+， 如果是3.0.0的就必须是26.+
+ *
+ * 这个文件要在应用下的 build.gradle（Project下的）最开头添加 apply from: 'dependencies.gradle'
+ *然后在 build.gradle（module：app 下的 ）引用的时候像下面这样
+ *compile "com.jakewharton:butterknife:$butterKnifeVersion"
+ *
+ * androidBuildToolsVersion 直接引用就行
+ */
+ext {
+
+    androidBuildToolsVersion = '25.0.3'
+    supportLibraryVersion = '25.4.0'
+
+    butterKnifeVersion = '8.8.1'
+    glideVersion = '4.3.0'
+    loggerVersion = '2.1.1'
+    retrofitVersion = '2.3.0'
+    okhttpVersion = '3.9.0'
+    rxJavaVersion = '2.1.5'
+    rxAndroidVersion = '2.0.1'
+
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+
+    <color name="yellow">#f4ea2a</color>
+    <color name="gray">#ababab</color>
+    <color name="green">#1aad19</color>
+
+
+    <color name="status_color">#6d4c41</color>
+    <color name="tool_bar_color">#9c786c</color>
+
+</resources>
