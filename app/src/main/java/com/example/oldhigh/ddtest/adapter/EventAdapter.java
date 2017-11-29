@@ -52,6 +52,18 @@ public class EventAdapter extends BaseAdapterRV<NewEventBean> {
             super(itemView);
             ButterKnife.bind(this , itemView);
 
+            text_content_adapter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (text_content_adapter.getMaxLines() == Integer.MAX_VALUE){
+                        text_content_adapter.setMaxLines(3);
+
+                    }else {
+                        text_content_adapter.setMaxLines(Integer.MAX_VALUE);
+
+                    }
+                }
+            });
 
         }
     }

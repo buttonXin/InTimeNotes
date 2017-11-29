@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +28,10 @@ import io.realm.RealmResults;
  * Created by oldhigh on 2017/11/26.
  */
 
-public class EventActivity extends AppCompatActivity{
+public class EventActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    @BindView(R.id.refresh_view)
+    SwipeRefreshLayout mRefreshLayout ;
 
     @BindView(R.id.recycler_event)
     RecyclerView mRecycler;
@@ -44,10 +49,15 @@ public class EventActivity extends AppCompatActivity{
         ButterKnife.bind(this);
 
         mEventAdapter = new EventAdapter();
+        initRecycler();
+        mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setColorSchemeColors(
+                ContextCompat.getColor(this , R.color.tool_bar_color));
+
 
         initData();
 
-        initRecycler();
+
     }
 
     private void initData() {
@@ -58,9 +68,8 @@ public class EventActivity extends AppCompatActivity{
 
                 L.e("size = " + newEventBeans.size());
 
-
-
                 mEventAdapter.addData(newEventBeans);
+                mRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -80,7 +89,7 @@ public class EventActivity extends AppCompatActivity{
     }
 
     private void showSnackBar(View view, final NewEventBean eventBean) {
-        Snackbar.make(view , eventBean.getContent() , 5000)
+        Snackbar.make(view , eventBean.getContent() , 3000)
                 .setAction("确定删除", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -92,11 +101,10 @@ public class EventActivity extends AppCompatActivity{
                 .show();
     }
 
-    /**
-     *
-     * @param text
-     */
-    public void cuo(String text){
+
+    @Override
+    public void onRefresh() {
+        initData();
 
     }
 }
