@@ -24,5 +24,7 @@ ext {
     okhttpVersion = '3.9.0'
     rxJavaVersion = '2.1.5'
     rxAndroidVersion = '2.0.1'
+    leakCanaryVersion = '1.5.4'
+
 
 }

@@ -90,7 +90,7 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
     public T removeItem(T t) {
         int position = mList.indexOf(t);
         mList.remove(position);
-        notifyItemRemoved(position);
+        notifyDataSetChanged();
         return t;
     }
 

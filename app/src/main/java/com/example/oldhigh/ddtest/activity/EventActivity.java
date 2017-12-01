@@ -18,6 +18,7 @@ import com.example.oldhigh.ddtest.bean.NewEventBean;
 import com.example.oldhigh.ddtest.service.EventService;
 import com.example.oldhigh.ddtest.util.L;
 import com.example.oldhigh.ddtest.util.RealmUtil;
+import com.example.oldhigh.ddtest.util.ScreenUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +59,7 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
         initData();
 
 
+        L.e("---> " + ScreenUtil.statusHeight(this));
     }
 
     private void initData() {

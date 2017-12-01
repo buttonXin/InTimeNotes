@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.oldhigh.ddtest.R;
 import com.example.oldhigh.ddtest.bean.NewEventBean;
+import com.example.oldhigh.ddtest.util.L;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,13 +31,29 @@ public class EventAdapter extends BaseAdapterRV<NewEventBean> {
     @Override
     protected void onBindVH(RecyclerView.ViewHolder viewHolder, int pos, NewEventBean eventBean) {
 
-        EventHolder holder = (EventHolder) viewHolder;
+        final EventHolder holder = (EventHolder) viewHolder;
 
         holder.text_content_adapter.setText(eventBean.getContent());
 
         holder.text_time_adapter.setText(
                 new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(eventBean.getTime())));
 
+        if (holder.text_content_adapter.getLineCount() == 3 ){
+
+            holder.text_content_adapter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (holder.text_content_adapter.getMaxLines() == Integer.MAX_VALUE){
+                        holder.text_content_adapter.setMaxLines(3);
+
+                    }else {
+                        holder.text_content_adapter.setMaxLines(Integer.MAX_VALUE);
+
+                    }
+                }
+            });
+
+        }
     }
 
     public static class EventHolder extends Holder {
@@ -52,7 +69,7 @@ public class EventAdapter extends BaseAdapterRV<NewEventBean> {
             super(itemView);
             ButterKnife.bind(this , itemView);
 
-            text_content_adapter.setOnClickListener(new View.OnClickListener() {
+           /* text_content_adapter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (text_content_adapter.getMaxLines() == Integer.MAX_VALUE){
@@ -62,8 +79,10 @@ public class EventAdapter extends BaseAdapterRV<NewEventBean> {
                         text_content_adapter.setMaxLines(Integer.MAX_VALUE);
 
                     }
+                    L.e("---> line = " + text_content_adapter.getLineCount());
+
                 }
-            });
+            });*/
 
         }
     }

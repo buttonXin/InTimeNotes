@@ -2,6 +2,8 @@ package com.example.oldhigh.ddtest;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -24,5 +26,10 @@ public class MyApp extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(config);
 
+
+        if (Constant.IS_DEV){
+
+            LeakCanary.install(this);
+        }
     }
 }
