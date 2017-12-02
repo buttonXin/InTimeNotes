@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#9c786c"
+    android:id="@+id/cl_root"
 
     >
 

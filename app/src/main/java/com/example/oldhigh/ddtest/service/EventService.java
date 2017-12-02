@@ -6,11 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -39,51 +35,35 @@ import io.reactivex.functions.Consumer;
 
 public class EventService extends Service {
 
-    //新事件通知
-    public static final int NEW_EVENT_WHAT = 1;
-    //新事件对象
-    public static final String NEW_EVENT_BEAN = "new_event";
-
-    //Activity的 Messenger
-    public static final int EVENT_MESSENGER = 2;
-
 
     //显示floatImage
     public static final int FLOAT_VIEW_IMAGE = 3 ;
     //显示中间布局
     public static final int FLOAT_VIEW = 4 ;
 
-    private Handler mHandler = new MyServiceHandler();
     private WindowManager mWindowManager;
+
+
+
     private WindowManager.LayoutParams mLayoutParams;
-    private boolean isAddView = false ;
+
+    private volatile boolean isAddView = false ;
+
     private Disposable mSubscribe;
+
     private View mFloatView;
+
     private View mFloatViewImage;
 
-    private class MyServiceHandler extends Handler{
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
 
 
-            if (msg.what ==  EVENT_MESSENGER){
-                mMessengerActivity = msg.replyTo;
-                L.e("收到Activity的MESSENGER");
-            }
-        }
-    }
-
-    private Messenger mMessenger  = new Messenger(mHandler);
-
-    private Messenger mMessengerActivity;
 
     private ClipboardManager mClipboardManager;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mMessenger.getBinder();
+        return null;
     }
 
     @Override
@@ -102,6 +82,7 @@ public class EventService extends Service {
     private NewEventBean mNewEventBean ;
     private long time= -1 ;
 
+    //剪切板的监听回到
     private ClipboardManager.OnPrimaryClipChangedListener mListener =
             new ClipboardManager.OnPrimaryClipChangedListener() {
         @Override
@@ -122,42 +103,20 @@ public class EventService extends Service {
             if (TextUtils.isEmpty(item.getText().toString().trim() )){
                 return;
             }
-            L.e("复制的内容 = " + TextUtils.isEmpty(item.getText().toString().trim() ) );
 
             mNewEventBean = new NewEventBean();
             mNewEventBean.setTime(System.currentTimeMillis());
             mNewEventBean.setContent(item.getText().toString());
 
-            messengerSend(mNewEventBean);
-
             RealmUtil.add(mNewEventBean);
 
-
-            RxHelper.checkDisposable(mSubscribe);
-
-            createButton();
+            createImage();
 
 
         }
     };
 
 
-
-    /**
-     *发送event到Activity
-     */
-    private void messengerSend(NewEventBean newEventBean) {
-        Message message = Message.obtain(null, NEW_EVENT_WHAT);
-        message.getData().putSerializable(NEW_EVENT_BEAN , mNewEventBean);
-        try {
-
-            if (mMessengerActivity != null) {
-                mMessengerActivity.send(message);
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     @Override
@@ -177,21 +136,31 @@ public class EventService extends Service {
     /**
      * 先显示提示按钮
      */
-    private void createButton() {
+    private void createImage() {
 
+        RxHelper.checkDisposable(mSubscribe);
 
-        mFloatViewImage = LayoutInflater.from(this).inflate(R.layout.float_view_button, null);
+        //如果添加了就不在进行添加， 只是重置一下消失时间
+        if (!isAddView){
 
-        mFloatViewImage.findViewById(R.id.image_float).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createFloatView();
-                RxHelper.checkDisposable(mSubscribe);
-                mWindowManager.removeView(mFloatViewImage);
-            }
-        });
+            mFloatViewImage = LayoutInflater.from(this).inflate(R.layout.float_view_button, null);
 
-        windowManagerAddView(mFloatViewImage, FLOAT_VIEW_IMAGE);
+            mFloatViewImage.findViewById(R.id.image_float).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createFloatView();
+
+                    RxHelper.checkDisposable(mSubscribe);
+                    mWindowManager.removeView(mFloatViewImage);
+                }
+            });
+
+            windowManagerAddView(mFloatViewImage, FLOAT_VIEW_IMAGE);
+
+            isAddView = true ;
+
+        }
+        L.e("image -- > ok。。");
 
         mSubscribe = Observable.timer(6 , TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -204,7 +173,6 @@ public class EventService extends Service {
                         }
                     }
                 });
-
     }
 
 
@@ -213,17 +181,10 @@ public class EventService extends Service {
      */
     public void createFloatView(){
 
-
-        if (isAddView){
-            mWindowManager.removeView(mFloatView);
-            isAddView = !isAddView ;
-        }
-
         mFloatView = LayoutInflater.from(this).inflate(R.layout.float_view, null);
 
 
         windowManagerAddView(mFloatView, FLOAT_VIEW);
-
 
         TextView textView = mFloatView.findViewById(R.id.text_content);
 
@@ -242,11 +203,6 @@ public class EventService extends Service {
                 return true;
             }
         });
-
-
-        isAddView = true ;
-        L.e("ok。。");
-
 
     }
 

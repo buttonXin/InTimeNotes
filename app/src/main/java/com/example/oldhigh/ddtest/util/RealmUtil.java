@@ -1,13 +1,11 @@
 package com.example.oldhigh.ddtest.util;
 
-import android.support.annotation.NonNull;
-
 import com.example.oldhigh.ddtest.bean.NewEventBean;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -23,15 +21,36 @@ public class RealmUtil {
      * 增加数据到数据库
      */
     public static void add(final NewEventBean eventBean) {
+        Realm realm = null;
 
-        Realm realm = Realm.getDefaultInstance();
+        try {
 
-        realm.beginTransaction();
-        realm.copyToRealm(eventBean);
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
 
-        realm.commitTransaction();
+            //先删除相同内容的， 在添加进去，也就算更新内容了
+            realm.where(NewEventBean.class)
+                    .equalTo("content", eventBean.getContent().trim())
+                    .findAll()
+                    .deleteAllFromRealm();
 
-        realm.close();
+            realm.copyToRealm(eventBean);
+
+
+            realm.commitTransaction();
+
+            L.e("添加成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (realm != null && realm.isInTransaction()) {
+                realm.cancelTransaction();
+            }
+        } finally {
+            if (realm != null) {
+                realm.close();
+            }
+        }
+
 
 
     }
@@ -40,27 +59,30 @@ public class RealmUtil {
     /**
      * 查找所有数据
      */
-    public static void queryAll(
-                             RealmChangeListener<RealmResults<NewEventBean>> listener) {
+    public static Flowable<RealmResults<NewEventBean>> queryAll() {
+
+
+
 
         Realm realm = Realm.getDefaultInstance();
 
-        realm.where(NewEventBean.class)
-                //根据时间来进行降序排序， 最新的放到最上面
-                .findAllSortedAsync("time" , Sort.DESCENDING)
-                .addChangeListener(listener);
+
+        return realm.where(NewEventBean.class)
+                .sort("time" , Sort.DESCENDING)
+                .findAllAsync().asFlowable().observeOn(AndroidSchedulers.mainThread());
 
     }
+
     /**
      * 查找数据
      */
-    public static void query(String content ,
+    public static void query(String content,
                              RealmChangeListener<RealmResults<NewEventBean>> listener) {
 
         Realm realm = Realm.getDefaultInstance();
 
         realm.where(NewEventBean.class)
-                .equalTo("content", content)
+                .equalTo("content", content.trim())
                 .findAllAsync()
                 .addChangeListener(listener);
 
@@ -76,14 +98,50 @@ public class RealmUtil {
     }
 
     /**
-     * 删除数据
+     * 删除相同内容和时间的数据
      */
-    public static void delete(NewEventBean eventBean) {
+    public static void deleteTime(final NewEventBean eventBean) {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.where(NewEventBean.class)
-                .equalTo("content", eventBean.getContent())
+                .equalTo("time", eventBean.getTime())
+                .findAll()
+                .deleteAllFromRealm();
+
+        realm.commitTransaction();
+
+        realm.close();
+
+
+    }
+
+  /*  *//**
+     * 删除相同内容的数据
+     *//*
+    public static void deleteContent(NewEventBean eventBean) {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.where(NewEventBean.class)
+                .equalTo("content", eventBean.getContent().trim())
+                .findAll()
+                .deleteAllFromRealm();
+
+        realm.commitTransaction();
+
+        realm.close();
+
+    }*/
+
+    /**
+     * 删除全部数据
+     */
+    public static void deleteAll(NewEventBean eventBean) {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.where(NewEventBean.class)
                 .findAll()
                 .deleteAllFromRealm();
 

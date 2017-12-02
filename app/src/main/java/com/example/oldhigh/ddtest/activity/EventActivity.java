@@ -1,15 +1,17 @@
 package com.example.oldhigh.ddtest.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.oldhigh.ddtest.R;
 import com.example.oldhigh.ddtest.adapter.BaseAdapterRV;
@@ -18,89 +20,90 @@ import com.example.oldhigh.ddtest.bean.NewEventBean;
 import com.example.oldhigh.ddtest.service.EventService;
 import com.example.oldhigh.ddtest.util.L;
 import com.example.oldhigh.ddtest.util.RealmUtil;
-import com.example.oldhigh.ddtest.util.ScreenUtil;
+import com.example.oldhigh.ddtest.util.SnackbarUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.RealmChangeListener;
+import butterknife.Unbinder;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import io.realm.RealmResults;
 
 /**
  * Created by oldhigh on 2017/11/26.
  */
 
-public class EventActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class EventActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, BaseAdapterRV.OnItemClickListener<NewEventBean>, EventAdapter.OnClickAdapterItemListener<Object> {
+
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @BindView(R.id.refresh_view)
-    SwipeRefreshLayout mRefreshLayout ;
+    SwipeRefreshLayout mRefreshLayout;
 
     @BindView(R.id.recycler_event)
     RecyclerView mRecycler;
 
+    @BindView(R.id.cl_root)
+    ConstraintLayout mConstraint ;
+
     private EventAdapter mEventAdapter;
+    private Unbinder mBind;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evnet);
+        mBind = ButterKnife.bind(this);
 
+        startService(new Intent(this, EventService.class));
 
-        startService(new Intent(this , EventService.class));
-
-        ButterKnife.bind(this);
 
         mEventAdapter = new EventAdapter();
         initRecycler();
+
         mRefreshLayout.setOnRefreshListener(this);
+
         mRefreshLayout.setColorSchemeColors(
-                ContextCompat.getColor(this , R.color.tool_bar_color));
+                ContextCompat.getColor(this, R.color.tool_bar_color));
 
 
-        initData();
-
-
-        L.e("---> " + ScreenUtil.statusHeight(this));
-    }
-
-    private void initData() {
-
-        RealmUtil.queryAll(new RealmChangeListener<RealmResults<NewEventBean>>() {
+        mRefreshLayout.post(new Runnable() {
             @Override
-            public void onChange(RealmResults<NewEventBean> newEventBeans) {
-
-                L.e("size = " + newEventBeans.size());
-
-                mEventAdapter.addData(newEventBeans);
-                mRefreshLayout.setRefreshing(false);
+            public void run() {
+                mRefreshLayout.setRefreshing(true);
+                initData();
             }
         });
+
+
     }
+
+    /**
+     * 从数据库获取数据
+     */
+    private void initData() {
+        mDisposable.add(RealmUtil.queryAll()
+                .subscribe(new Consumer<RealmResults<NewEventBean>>() {
+                    @Override
+                    public void accept(RealmResults<NewEventBean> newEventBeans) throws Exception {
+                        mEventAdapter.addData(newEventBeans);
+                        mRefreshLayout.setRefreshing(false);
+                    }
+                }) );
+    }
+
 
     private void initRecycler() {
         mRecycler.setLayoutManager(new LinearLayoutManager(
-                this , LinearLayoutManager.VERTICAL , false));
+                this, LinearLayoutManager.VERTICAL, false));
 
         mRecycler.setAdapter(mEventAdapter);
 
-        mEventAdapter.setItemOnClickListener(new BaseAdapterRV.OnItemClickListener<NewEventBean>() {
-            @Override
-            public void onItemClick(int position, View view, NewEventBean eventBean) {
-                showSnackBar(view , eventBean);
-            }
-        });
-    }
+        mEventAdapter.setItemOnClickListener(this);
 
-    private void showSnackBar(View view, final NewEventBean eventBean) {
-        Snackbar.make(view , eventBean.getContent() , 3000)
-                .setAction("确定删除", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mEventAdapter.removeItem(eventBean);
-                        RealmUtil.delete(eventBean);
+        mEventAdapter.setOnClickAdapterItemListener(this);
 
-                    }
-                })
-                .show();
     }
 
 
@@ -108,5 +111,87 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
     public void onRefresh() {
         initData();
 
+    }
+
+    @Override
+    public void onItemClick(int position,  View view,  NewEventBean eventBean) {
+
+        showDialog(view , eventBean);
+    }
+
+    @Override
+    public void onText(int position, View v, NewEventBean eventBean) {
+        TextView textView = (TextView) v;
+
+        if (textView.getLineCount() >= 3) {
+
+            if (textView.getMaxLines() == Integer.MAX_VALUE) {
+                textView.setMaxLines(3);
+            } else {
+                textView.setMaxLines(Integer.MAX_VALUE);
+            }
+
+        } else {
+            showDialog(v, eventBean);
+        }
+    }
+
+    /**
+     *显示dialog
+     */
+    private void showDialog(final View view, final NewEventBean eventBean) {
+
+        //取30个就行
+        String content = eventBean.getContent();
+        int length = content.length();
+        content = length > 30 ? content.substring(0 , 30)+"..." : content ;
+
+        new AlertDialog.Builder(this)
+                .setMessage(content )
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        //这里必须用new的原因是Realm 的原因，删除对象后，这个对象都无效了
+                        // ， 所以不能再进行别的操作！！！切记切记！
+                        showSnackBar(new NewEventBean(
+                                eventBean.getTime() , eventBean.getContent()));
+
+                        mEventAdapter.removeItem(eventBean);
+                        RealmUtil.deleteTime(eventBean);
+                    }
+                })
+                .show();
+    }
+
+
+    /**
+     * 显示snackBar来防止撤回
+     * */
+    private void showSnackBar(final NewEventBean eventBean) {
+
+        SnackbarUtil.snackbarTime(mConstraint, eventBean.getContent(),
+                ContextCompat.getColor(mContext, R.color.white),
+                ContextCompat.getColor(mContext, R.color.colorAccent),
+                ContextCompat.getColor(mContext, R.color.tool_bar_color),
+                3000)
+                .setAction("撤回", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mEventAdapter.addItem(eventBean);
+                        L.e("event = " + eventBean.toString());
+                        RealmUtil.add(eventBean);
+                    }
+                })
+                .show();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDisposable.dispose();
+        mBind.unbind();
     }
 }

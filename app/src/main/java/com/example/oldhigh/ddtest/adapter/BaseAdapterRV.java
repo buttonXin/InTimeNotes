@@ -16,6 +16,8 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
     public List<T> mList = new ArrayList<>();
 
     private OnItemClickListener mOnItemClickListener;//点击事件
+    //删除 和添加数据 的位置
+    private int mPosition;
 
     /**
      * 添加数据
@@ -80,17 +82,17 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
      * 添加数据
      */
     public void addItem(T t) {
-        mList.add(0, t);
-        notifyItemInserted(0);
+        mList.add(mPosition ,  t);
+        notifyItemInserted(mPosition);
     }
 
     /**
      * 删除数据,如果用notifyDataSetChanged();没有动画效果
      */
     public T removeItem(T t) {
-        int position = mList.indexOf(t);
-        mList.remove(position);
-        notifyDataSetChanged();
+        mPosition = mList.indexOf(t);
+        mList.remove(mPosition);
+        notifyItemRemoved(mPosition);
         return t;
     }
 

@@ -1,5 +1,6 @@
 package com.example.oldhigh.ddtest.activity;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -24,6 +25,7 @@ public class BaseActivity  extends AppCompatActivity{
 
     private LinearLayout mRoot_layout;
     private Toolbar mToolbar;
+    protected Context mContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class BaseActivity  extends AppCompatActivity{
 
         super.setContentView(R.layout.activity_base);
 
+        mContext = this ;
         Window window = getWindow();
         //取消设置透明状态栏,使 ContentView 内容不再覆盖状态栏
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);

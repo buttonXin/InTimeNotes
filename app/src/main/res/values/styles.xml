@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="android:windowBackground">@color/tool_bar_color</item>
+        <item name="android:statusBarColor">@color/tool_bar_color</item>
 
     </style>
 
