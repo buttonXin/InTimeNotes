@@ -1,10 +1,15 @@
 package com.example.oldhigh.ddtest.service;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -21,6 +26,7 @@ import com.example.oldhigh.ddtest.bean.NewEventBean;
 import com.example.oldhigh.ddtest.util.L;
 import com.example.oldhigh.ddtest.util.RealmUtil;
 import com.example.oldhigh.ddtest.util.RxHelper;
+import com.example.oldhigh.ddtest.util.ScreenUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -59,6 +65,7 @@ public class EventService extends Service {
 
 
     private ClipboardManager mClipboardManager;
+    private AnimatorSet mSet;
 
     @Nullable
     @Override
@@ -69,6 +76,12 @@ public class EventService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mFloatViewImage = LayoutInflater.from(this).inflate(R.layout.float_view_button, null);
+
+        mFloatView = LayoutInflater.from(this).inflate(R.layout.float_view, null);
+
+        mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 
         mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
@@ -143,8 +156,6 @@ public class EventService extends Service {
         //如果添加了就不在进行添加， 只是重置一下消失时间
         if (!isAddView){
 
-            mFloatViewImage = LayoutInflater.from(this).inflate(R.layout.float_view_button, null);
-
             mFloatViewImage.findViewById(R.id.image_float).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -162,17 +173,54 @@ public class EventService extends Service {
         }
         L.e("image -- > ok。。");
 
-        mSubscribe = Observable.timer(6 , TimeUnit.SECONDS)
+        mSubscribe = Observable.interval(1 , TimeUnit.SECONDS)
+                .take(6)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        animationImage(aLong);
+                    }
+                })
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        if (isAddView) {
+                        if (isAddView && aLong == 5) {
                             mWindowManager.removeView(mFloatViewImage);
                             isAddView = !isAddView ;
+
+                            if (mSet != null){
+                                mSet.cancel();
+                            }
+
                         }
+
+
                     }
                 });
+
+    }
+
+    /**
+     *给image做动画
+     */
+    private void animationImage(Long aLong) {
+        if (!isAddView) {
+            return;
+        }
+        if (aLong % 2 == 0) {
+            return;
+        }
+
+        mSet = new AnimatorSet();
+        mSet.playTogether(
+        ObjectAnimator.ofFloat(mFloatViewImage , "scaleX" ,1 , 1.3f ,1),
+        ObjectAnimator.ofFloat(mFloatViewImage , "scaleY" ,1 , 1.3f ,1)
+
+        );
+
+        mSet.setDuration(300).start();
+
     }
 
 
@@ -180,10 +228,6 @@ public class EventService extends Service {
      * 创建浮动view
      */
     public void createFloatView(){
-
-        mFloatView = LayoutInflater.from(this).inflate(R.layout.float_view, null);
-
-
         windowManagerAddView(mFloatView, FLOAT_VIEW);
 
         TextView textView = mFloatView.findViewById(R.id.text_content);
@@ -209,7 +253,6 @@ public class EventService extends Service {
 
     private void windowManagerAddView(View view, int type ){
 
-        mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         mLayoutParams = new WindowManager.LayoutParams();
 
         //TYPE_SYSTEM_ERROR
@@ -246,8 +289,8 @@ public class EventService extends Service {
 
 
             mLayoutParams.gravity = Gravity.END | Gravity.TOP;
-            mLayoutParams.x = 0;
-            mLayoutParams.y = 30;
+            mLayoutParams.x = 10;
+            mLayoutParams.y = ScreenUtil.statusHeight(this) + ScreenUtil.toolBarHeight(this);
         }
 
 
