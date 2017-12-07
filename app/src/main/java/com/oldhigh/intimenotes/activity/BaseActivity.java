@@ -1,7 +1,7 @@
-package com.example.oldhigh.ddtest.activity;
+package com.oldhigh.intimenotes.activity;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -15,7 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.example.oldhigh.ddtest.R;
+import com.oldhigh.intimenotes.R;
 
 /**
  * Created by oldhigh on 2017/11/29.
@@ -86,5 +86,9 @@ public class BaseActivity  extends AppCompatActivity{
     }
 
 
+
+    protected void _startActivity(Class clazz){
+        startActivity(new Intent(this ,clazz));
+    }
 
 }

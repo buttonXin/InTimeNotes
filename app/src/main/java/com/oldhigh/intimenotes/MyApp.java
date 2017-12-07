@@ -1,4 +1,4 @@
-package com.example.oldhigh.ddtest;
+package com.oldhigh.intimenotes;
 
 import android.app.Application;
 

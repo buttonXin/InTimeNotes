@@ -1,7 +1,5 @@
-package com.example.oldhigh.ddtest.service;
+package com.oldhigh.intimenotes.service;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Service;
@@ -9,7 +7,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -21,12 +18,12 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.oldhigh.ddtest.R;
-import com.example.oldhigh.ddtest.bean.NewEventBean;
-import com.example.oldhigh.ddtest.util.L;
-import com.example.oldhigh.ddtest.util.RealmUtil;
-import com.example.oldhigh.ddtest.util.RxHelper;
-import com.example.oldhigh.ddtest.util.ScreenUtil;
+import com.oldhigh.intimenotes.R;
+import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.util.L;
+import com.oldhigh.intimenotes.util.RealmUtil;
+import com.oldhigh.intimenotes.util.RxHelper;
+import com.oldhigh.intimenotes.util.ScreenUtil;
 
 import java.util.concurrent.TimeUnit;
 

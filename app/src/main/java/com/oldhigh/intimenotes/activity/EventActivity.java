@@ -1,10 +1,11 @@
-package com.example.oldhigh.ddtest.activity;
+package com.oldhigh.intimenotes.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -13,17 +14,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.oldhigh.ddtest.R;
-import com.example.oldhigh.ddtest.adapter.BaseAdapterRV;
-import com.example.oldhigh.ddtest.adapter.EventAdapter;
-import com.example.oldhigh.ddtest.bean.NewEventBean;
-import com.example.oldhigh.ddtest.service.EventService;
-import com.example.oldhigh.ddtest.util.L;
-import com.example.oldhigh.ddtest.util.RealmUtil;
-import com.example.oldhigh.ddtest.util.SnackbarUtil;
+import com.oldhigh.intimenotes.R;
+import com.oldhigh.intimenotes.adapter.BaseAdapterRV;
+import com.oldhigh.intimenotes.adapter.EventAdapter;
+import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.service.EventService;
+import com.oldhigh.intimenotes.util.L;
+import com.oldhigh.intimenotes.util.RealmUtil;
+import com.oldhigh.intimenotes.util.SnackbarUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -43,8 +45,8 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
     @BindView(R.id.recycler_event)
     RecyclerView mRecycler;
 
-    @BindView(R.id.cl_root)
-    ConstraintLayout mConstraint ;
+    @BindView(R.id.fab)
+    FloatingActionButton fab ;
 
     private EventAdapter mEventAdapter;
     private Unbinder mBind;
@@ -155,7 +157,7 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
 
                         //这里必须用new的原因是Realm 的原因，删除对象后，这个对象都无效了
                         // ， 所以不能再进行别的操作！！！切记切记！
-                        showSnackBar(new NewEventBean(
+                        showSnackBar(view ,new NewEventBean(
                                 eventBean.getTime() , eventBean.getContent()));
 
                         mEventAdapter.removeItem(eventBean);
@@ -169,9 +171,9 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
     /**
      * 显示snackBar来防止撤回
      * */
-    private void showSnackBar(final NewEventBean eventBean) {
+    private void showSnackBar(View view, final NewEventBean eventBean) {
 
-        SnackbarUtil.snackbarTime(mConstraint, eventBean.getContent(),
+        SnackbarUtil.snackbarTime(view, eventBean.getContent(),
                 ContextCompat.getColor(mContext, R.color.white),
                 ContextCompat.getColor(mContext, R.color.colorAccent),
                 ContextCompat.getColor(mContext, R.color.tool_bar_color),
@@ -185,6 +187,20 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
                     }
                 })
                 .show();
+    }
+
+    @OnClick({R.id.fab })
+    public void onClickView(View view){
+        switch (view.getId()){
+
+            case R.id.fab:
+                _startActivity(AddEventActivity.class);
+                break;
+
+
+            default:
+                break;
+        }
     }
 
 

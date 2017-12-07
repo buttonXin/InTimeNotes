@@ -1,6 +1,6 @@
-package com.example.oldhigh.ddtest.util;
+package com.oldhigh.intimenotes.util;
 
-import com.example.oldhigh.ddtest.bean.NewEventBean;
+import com.oldhigh.intimenotes.bean.NewEventBean;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

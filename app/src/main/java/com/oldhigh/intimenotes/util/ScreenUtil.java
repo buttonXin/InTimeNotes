@@ -1,4 +1,4 @@
-package com.example.oldhigh.ddtest.util;
+package com.oldhigh.intimenotes.util;
 
 import android.content.Context;
 import android.util.TypedValue;

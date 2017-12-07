@@ -1,4 +1,4 @@
-package com.example.oldhigh.ddtest.adapter;
+package com.oldhigh.intimenotes.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

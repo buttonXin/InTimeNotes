@@ -1,4 +1,4 @@
-package com.example.oldhigh.ddtest;
+package com.oldhigh.intimenotes;
 
 /**
  * Created by oldhigh on 2017/11/6.

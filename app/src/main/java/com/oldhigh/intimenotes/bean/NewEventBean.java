@@ -1,9 +1,6 @@
-package com.example.oldhigh.ddtest.bean;
-
-import android.support.annotation.NonNull;
+package com.oldhigh.intimenotes.bean;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 import io.realm.RealmObject;
 

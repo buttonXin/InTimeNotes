@@ -1,19 +1,13 @@
-package com.example.oldhigh.ddtest.activity;
+package com.oldhigh.intimenotes.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.oldhigh.ddtest.R;
-import com.example.oldhigh.ddtest.ui.RippleView;
+import com.oldhigh.intimenotes.R;
+import com.oldhigh.intimenotes.ui.RippleView;
 
 /**
  * Created by oldhigh on 2017/12/3.

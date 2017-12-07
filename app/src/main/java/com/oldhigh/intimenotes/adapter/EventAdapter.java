@@ -1,4 +1,4 @@
-package com.example.oldhigh.ddtest.adapter;
+package com.oldhigh.intimenotes.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.oldhigh.ddtest.R;
-import com.example.oldhigh.ddtest.bean.NewEventBean;
+import com.oldhigh.intimenotes.R;
+import com.oldhigh.intimenotes.bean.NewEventBean;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

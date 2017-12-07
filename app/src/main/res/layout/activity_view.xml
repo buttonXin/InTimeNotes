@@ -4,7 +4,7 @@
 
 
 
-    <com.example.oldhigh.ddtest.ui.RippleView
+    <com.oldhigh.intimenotes.ui.RippleView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:id="@+id/ripple"
