@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">及时笔记</string>
     <string name="title_activity_add_event">添加事件</string>
+    <string name="title_activity_main_activityss">MainActivityss</string>
 
 
 </resources>

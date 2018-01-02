@@ -113,6 +113,7 @@ public class RealmUtil {
 
         realm.close();
 
+        L.e("删除数据");
 
     }
 

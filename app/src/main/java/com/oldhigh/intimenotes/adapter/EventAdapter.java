@@ -1,5 +1,6 @@
 package com.oldhigh.intimenotes.adapter;
 
+import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import butterknife.ButterKnife;
 public class EventAdapter extends BaseAdapterRV<NewEventBean> {
 
     private  OnClickAdapterItemListener mListener;
+    private int mLastPosition;
 
     @Override
     public RecyclerView.ViewHolder createVHolder(ViewGroup parent, int viewType) {
@@ -33,6 +35,7 @@ public class EventAdapter extends BaseAdapterRV<NewEventBean> {
     @Override
     protected void onBindVH(RecyclerView.ViewHolder viewHolder, int pos, NewEventBean eventBean) {
 
+        autoAnimation(viewHolder);
         final EventHolder holder = (EventHolder) viewHolder;
 
         holder.text_content_adapter.setText(eventBean.getContent());
@@ -70,6 +73,19 @@ public class EventAdapter extends BaseAdapterRV<NewEventBean> {
         mListener = listener;
     }
 
+    /**
+     *自定义动画
+     * @param viewHolder
+     */
+    public void autoAnimation(RecyclerView.ViewHolder viewHolder){
+
+        if (viewHolder.getAdapterPosition() > mLastPosition) {
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(viewHolder.itemView,
+                    "scaleX", 0.5f, 1f);
+            scaleX.start();
+            mLastPosition = viewHolder.getLayoutPosition();
+        }
+    }
 
     //item的点击事件
     public interface OnClickAdapterItemListener<T>{

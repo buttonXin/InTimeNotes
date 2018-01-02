@@ -1,10 +1,12 @@
 package com.oldhigh.intimenotes.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,9 +31,9 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
     }
 
     /**
-     *获取当前的集合
+     * 获取当前的集合
      */
-    public List<T> getList(){
+    public List<T> getList() {
 
         return mList;
     }
@@ -51,7 +53,6 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return createVHolder(parent, viewType);
     }
-
 
 
     @Override
@@ -82,8 +83,16 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
      * 添加数据
      */
     public void addItem(T t) {
-        mList.add(mPosition ,  t);
+        mList.add(mPosition, t);
         notifyItemInserted(mPosition);
+    }
+
+    /**
+     * 交换数据
+     */
+    public void onItemDragged(int from, int to) {
+        Collections.swap(mList, from, to);
+        notifyItemMoved(from, to);
     }
 
     /**
@@ -93,6 +102,14 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
         mPosition = mList.indexOf(t);
         mList.remove(mPosition);
         notifyItemRemoved(mPosition);
+        return t;
+    }
+    /**
+     * 删除数据,如果用notifyDataSetChanged();没有动画效果
+     */
+    public T removeItem(int  position) {
+        T t = mList.remove(position);
+        notifyItemRemoved(position);
         return t;
     }
 

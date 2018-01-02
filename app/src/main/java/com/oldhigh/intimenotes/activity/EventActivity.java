@@ -9,8 +9,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +25,9 @@ import com.oldhigh.intimenotes.util.L;
 import com.oldhigh.intimenotes.util.RealmUtil;
 import com.oldhigh.intimenotes.util.SnackbarUtil;
 
+import java.net.URI;
+import java.util.Collections;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,6 +35,8 @@ import butterknife.Unbinder;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.realm.RealmResults;
+
+import static android.support.v7.widget.helper.ItemTouchHelper.Callback.makeMovementFlags;
 
 /**
  * Created by oldhigh on 2017/11/26.
@@ -50,6 +57,7 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
 
     private EventAdapter mEventAdapter;
     private Unbinder mBind;
+    private RealmResults<NewEventBean> mNewEventBeans;
 
 
     @Override
@@ -89,7 +97,8 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
                 .subscribe(new Consumer<RealmResults<NewEventBean>>() {
                     @Override
                     public void accept(RealmResults<NewEventBean> newEventBeans) throws Exception {
-                        mEventAdapter.addData(newEventBeans);
+                        mNewEventBeans = newEventBeans;
+                        mEventAdapter.addData(mNewEventBeans);
                         mRefreshLayout.setRefreshing(false);
                     }
                 }) );
@@ -102,10 +111,47 @@ public class EventActivity extends BaseActivity implements SwipeRefreshLayout.On
 
         mRecycler.setAdapter(mEventAdapter);
 
+
         mEventAdapter.setItemOnClickListener(this);
 
         mEventAdapter.setOnClickAdapterItemListener(this);
 
+        initRVAnimation(mRecycler);
+    }
+
+    /**
+     *侧滑  和拖拽 事件
+     */
+    private void initRVAnimation(RecyclerView recycler) {
+        //为RecycleView绑定触摸事件
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                //侧滑删除
+                int swipeFlags = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+                //首先回调的方法 返回int表示是否监听该方向
+                int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+                //拖拽
+                return makeMovementFlags(dragFlags, swipeFlags);
+            }
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                //拖拽事件 ， 也就是移动item
+                mEventAdapter.onItemDragged(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                //侧滑事件
+                mEventAdapter.removeItem(viewHolder.getAdapterPosition());
+            }
+            @Override
+            public boolean isLongPressDragEnabled() {
+                //是否可拖拽
+                return true;
+            }
+        });
+        helper.attachToRecyclerView(recycler);
     }
 
 

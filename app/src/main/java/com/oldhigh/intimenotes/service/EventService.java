@@ -15,11 +15,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oldhigh.intimenotes.R;
 import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.util.FloatViewUtil;
 import com.oldhigh.intimenotes.util.L;
 import com.oldhigh.intimenotes.util.RealmUtil;
 import com.oldhigh.intimenotes.util.RxHelper;
@@ -38,29 +41,6 @@ import io.reactivex.functions.Consumer;
 
 public class EventService extends Service {
 
-
-    //显示floatImage
-    public static final int FLOAT_VIEW_IMAGE = 3 ;
-    //显示中间布局
-    public static final int FLOAT_VIEW = 4 ;
-
-    private WindowManager mWindowManager;
-
-
-
-    private WindowManager.LayoutParams mLayoutParams;
-
-    private volatile boolean isAddView = false ;
-
-    private Disposable mSubscribe;
-
-    private View mFloatView;
-
-    private View mFloatViewImage;
-
-
-
-
     private ClipboardManager mClipboardManager;
     private AnimatorSet mSet;
 
@@ -74,24 +54,20 @@ public class EventService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        mFloatViewImage = LayoutInflater.from(this).inflate(R.layout.float_view_button, null);
-
-        mFloatView = LayoutInflater.from(this).inflate(R.layout.float_view, null);
-
-        mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-
         mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
         if (mClipboardManager != null) {
             mClipboardManager.addPrimaryClipChangedListener(mListener);
         }
 
+        mFloatViewUtil = new FloatViewUtil(getApplicationContext());
+
     }
 
 
-    private NewEventBean mNewEventBean ;
     private long time= -1 ;
 
+    private FloatViewUtil mFloatViewUtil;
     //剪切板的监听回到
     private ClipboardManager.OnPrimaryClipChangedListener mListener =
             new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -114,14 +90,15 @@ public class EventService extends Service {
                 return;
             }
 
-            mNewEventBean = new NewEventBean();
-            mNewEventBean.setTime(System.currentTimeMillis());
-            mNewEventBean.setContent(item.getText().toString());
+            NewEventBean newEventBean = new NewEventBean();
+            newEventBean.setTime(System.currentTimeMillis());
+            newEventBean.setContent(item.getText().toString().trim());
 
-            RealmUtil.add(mNewEventBean);
-
-            createImage();
-
+            if (mFloatViewUtil == null){
+                mFloatViewUtil = new FloatViewUtil(getApplicationContext());
+            }else {
+                mFloatViewUtil.createImage(newEventBean);
+            }
 
         }
     };
@@ -141,158 +118,10 @@ public class EventService extends Service {
 
         mClipboardManager.removePrimaryClipChangedListener(mListener);
 
-    }
-
-    /**
-     * 先显示提示按钮
-     */
-    private void createImage() {
-
-        RxHelper.checkDisposable(mSubscribe);
-
-        //如果添加了就不在进行添加， 只是重置一下消失时间
-        if (!isAddView){
-
-            mFloatViewImage.findViewById(R.id.image_float).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    createFloatView();
-
-                    RxHelper.checkDisposable(mSubscribe);
-                    mWindowManager.removeView(mFloatViewImage);
-                }
-            });
-
-            windowManagerAddView(mFloatViewImage, FLOAT_VIEW_IMAGE);
-
-            isAddView = true ;
-
+        if (mFloatViewUtil != null){
+            mFloatViewUtil.clear();
         }
-        L.e("image -- > ok。。");
-
-        mSubscribe = Observable.interval(1 , TimeUnit.SECONDS)
-                .take(6)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        animationImage(aLong);
-                    }
-                })
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        if (isAddView && aLong == 5) {
-                            mWindowManager.removeView(mFloatViewImage);
-                            isAddView = !isAddView ;
-
-                            if (mSet != null){
-                                mSet.cancel();
-                            }
-
-                        }
-
-
-                    }
-                });
-
-    }
-
-    /**
-     *给image做动画
-     */
-    private void animationImage(Long aLong) {
-        if (!isAddView) {
-            return;
-        }
-        if (aLong % 2 == 0) {
-            return;
-        }
-
-        mSet = new AnimatorSet();
-        mSet.playTogether(
-        ObjectAnimator.ofFloat(mFloatViewImage , "scaleX" ,1 , 1.3f ,1),
-        ObjectAnimator.ofFloat(mFloatViewImage , "scaleY" ,1 , 1.3f ,1)
-
-        );
-
-        mSet.setDuration(300).start();
-
     }
 
 
-    /**
-     * 创建浮动view
-     */
-    public void createFloatView(){
-        windowManagerAddView(mFloatView, FLOAT_VIEW);
-
-        TextView textView = mFloatView.findViewById(R.id.text_content);
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(EventService.this, "ok", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        textView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                mWindowManager.removeView(mFloatView);
-                return true;
-            }
-        });
-
-    }
-
-
-    private void windowManagerAddView(View view, int type ){
-
-        mLayoutParams = new WindowManager.LayoutParams();
-
-        //TYPE_SYSTEM_ERROR
-        mLayoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-        // 设置图片格式，效果为背景透明
-        mLayoutParams.format = PixelFormat.TRANSPARENT;
-        // 设置Window flag
-        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-
-  /*
-         * 下面的flags属性的效果形同“锁定”。 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应。
-         * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL |
-         * LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCHABLE;
-         */
-
-
-        if (type == FLOAT_VIEW){
-
-            // 设置悬浮窗的长得宽
-            mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-            mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-
-            mLayoutParams.gravity = Gravity.START | Gravity.TOP;
-            mLayoutParams.x = 0;
-            mLayoutParams.y = 0;
-
-        }else {
-
-            // 设置悬浮窗的长得宽
-            mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-
-            mLayoutParams.gravity = Gravity.END | Gravity.TOP;
-            mLayoutParams.x = 10;
-            mLayoutParams.y = ScreenUtil.statusHeight(this) + ScreenUtil.toolBarHeight(this);
-        }
-
-
-
-        mWindowManager.addView(view, mLayoutParams);
-
-    }
 }

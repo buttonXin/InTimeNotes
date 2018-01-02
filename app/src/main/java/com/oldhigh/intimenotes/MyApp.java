@@ -13,11 +13,6 @@ import io.realm.RealmConfiguration;
 
 public class MyApp extends Application {
 
-
-
-
-
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -29,7 +24,9 @@ public class MyApp extends Application {
 
         if (Constant.IS_DEV){
 
-            LeakCanary.install(this);
+            //LeakCanary.install(this);
         }
+
+
     }
 }
