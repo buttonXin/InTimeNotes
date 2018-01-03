@@ -14,14 +14,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oldhigh.intimenotes.R;
-import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.data.NewEventBean;
 
 import java.util.concurrent.TimeUnit;
 

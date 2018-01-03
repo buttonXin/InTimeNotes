@@ -9,6 +9,7 @@
     <color name="status_color">#40241a</color>
     <color name="tool_bar_color">#6d4c41</color>
     <color name="tool_seconds">#8f8986</color>
+    <color name="background">#5b5755</color>
     <color name="white">#fff</color>
 
     <color name="black">#212121</color>

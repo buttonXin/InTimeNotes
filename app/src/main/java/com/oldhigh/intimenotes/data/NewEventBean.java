@@ -1,4 +1,4 @@
-package com.oldhigh.intimenotes.bean;
+package com.oldhigh.intimenotes.data;
 
 import java.io.Serializable;
 
@@ -46,5 +46,9 @@ public class NewEventBean extends RealmObject implements Serializable {
                 "time=" + time +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    public NewEventBean copyEvent(){
+        return new NewEventBean(this.getTime() , this.getContent());
     }
 }

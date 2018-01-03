@@ -113,6 +113,14 @@ public abstract class BaseAdapterRV<T> extends RecyclerView.Adapter<RecyclerView
         return t;
     }
 
+    /**
+     *获取当前位置的T类
+     */
+    public T getCurrent(int position){
+
+        return mList.get(position);
+    }
+
 
     public abstract RecyclerView.ViewHolder createVHolder(ViewGroup parent, int viewType);
 

@@ -22,7 +22,7 @@ public class MyApp extends Application {
         Realm.setDefaultConfiguration(config);
 
 
-        if (Constant.IS_DEV){
+        if (BuildConfig.IS_DEBUG){
 
             //LeakCanary.install(this);
         }

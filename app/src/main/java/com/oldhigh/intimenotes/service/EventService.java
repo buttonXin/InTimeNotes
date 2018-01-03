@@ -1,39 +1,17 @@
 package com.oldhigh.intimenotes.service;
 
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.oldhigh.intimenotes.R;
-import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.data.NewEventBean;
 import com.oldhigh.intimenotes.util.FloatViewUtil;
 import com.oldhigh.intimenotes.util.L;
-import com.oldhigh.intimenotes.util.RealmUtil;
-import com.oldhigh.intimenotes.util.RxHelper;
-import com.oldhigh.intimenotes.util.ScreenUtil;
-
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by oldhigh on 2017/11/16.

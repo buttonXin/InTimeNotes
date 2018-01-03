@@ -1,6 +1,6 @@
 package com.oldhigh.intimenotes.util;
 
-import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.data.NewEventBean;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -91,10 +91,15 @@ public class RealmUtil {
     /**
      * 修改数据
      */
-    public static void modify(Realm.Transaction transaction) {
+    public static void modify(NewEventBean eventBean) {
 
-        Realm.getDefaultInstance().executeTransactionAsync(transaction);
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                NewEventBean newEventBean = realm.where(NewEventBean.class).findFirst();
 
+            }
+        });
     }
 
     /**
@@ -138,7 +143,7 @@ public class RealmUtil {
     /**
      * 删除全部数据
      */
-    public static void deleteAll(NewEventBean eventBean) {
+    public static void deleteAll() {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -152,5 +157,11 @@ public class RealmUtil {
 
     }
 
+    /**
+     * 关闭数据库
+     */
+    public static void closeRealm(){
+        Realm.getDefaultInstance().close();
+    }
 
 }

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.oldhigh.intimenotes.R;
-import com.oldhigh.intimenotes.bean.NewEventBean;
+import com.oldhigh.intimenotes.data.NewEventBean;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.EventActivity">
+        <activity android:name=".event.EventsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +30,7 @@
             android:process=":clipboard" />
 
         <activity
-            android:name=".activity.AddEventActivity"
+            android:name=".event.AddEventActivity"
             android:label="@string/title_activity_add_event"></activity>
     </application>
 
