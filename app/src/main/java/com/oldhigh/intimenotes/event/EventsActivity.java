@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import com.oldhigh.intimenotes.R;
 import com.oldhigh.intimenotes.service.EventService;
 import com.oldhigh.intimenotes.util.ActivityUtils;
-import com.oldhigh.intimenotes.util.L;
 import com.oldhigh.intimenotes.util.RealmUtil;
 
 /**

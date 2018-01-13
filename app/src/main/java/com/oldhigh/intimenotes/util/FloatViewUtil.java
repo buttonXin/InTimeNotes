@@ -198,6 +198,8 @@ public class FloatViewUtil implements View.OnClickListener {
 
                     openURlAdress(mContext , mEdit_content.getText().toString());
                 }
+                mWindowManager.removeView(mFloatView);
+
                 break;
 
             case R.id.view_back:
@@ -357,11 +359,15 @@ public class FloatViewUtil implements View.OnClickListener {
     }
 
 
-    public static void openURlAdress(Context context, String url) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("http:"));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    private   void openURlAdress(Context context, String content) {
+        Intent intent=new Intent();//创建Intent对象
+        intent.setAction(Intent.ACTION_VIEW);//为Intent设置动作
+
+//        intent.setData(Uri.parse("https://www.google.com/search?q=" + content));//为Intent设置数据
+        intent.setData(Uri.parse("https://www.baidu.com/s?ie=UTF-8&wd=" + content));//为Intent设置数据
+        context.startActivity(intent);//将Intent传递给Activity
+
+
+
     }
 }

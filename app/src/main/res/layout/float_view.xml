@@ -74,6 +74,7 @@
                 android:textColorHint="@color/tool_seconds"
                 android:layout_margin="2dp"
                 android:focusableInTouchMode="true"
+                android:maxLines="3"
                 />
 
 

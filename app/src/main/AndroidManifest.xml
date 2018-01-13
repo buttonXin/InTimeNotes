@@ -27,7 +27,17 @@
 
         <service
             android:name=".service.EventService"
-            android:process=":clipboard" />
+            android:process=":clipboard" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+            </intent-filter>
+
+
+        </service>
 
         <activity
             android:name=".event.AddEventActivity"

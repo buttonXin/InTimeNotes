@@ -1,5 +1,7 @@
 package com.oldhigh.intimenotes.event;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -38,6 +40,8 @@ public class AddEventActivity extends AppCompatActivity {
     public void completeBtn(){
 
         String event = edit_event.getText().toString().trim();
+
+
         if (TextUtils.isEmpty(event)){
             Toast.makeText(this, "输入内容", Toast.LENGTH_SHORT).show();
             return;
