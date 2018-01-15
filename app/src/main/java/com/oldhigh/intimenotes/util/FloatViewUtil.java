@@ -189,9 +189,11 @@ public class FloatViewUtil implements View.OnClickListener {
             case R.id.text_add:
                 RealmUtil.add(mNewEventBean);
 
-                if (mEdit_content != null) {
-                    mEdit_content.getText().clear();
-                }
+//                if (mEdit_content != null) {
+//                    mEdit_content.getText().clear();
+//                }
+                Toast.makeText(mContext, "添加成功", Toast.LENGTH_LONG).show();
+
                 break;
             case R.id.text_search:
                 if (mEdit_content != null) {
@@ -226,13 +228,12 @@ public class FloatViewUtil implements View.OnClickListener {
     private void windowManagerAddView(View view, int type) {
         mLayoutParams = new WindowManager.LayoutParams();
 
+        //这里的type要使用好，8.0的需要使用这个 TYPE_APPLICATION_OVERLAY，8.0以下的还没有测试
         int LPtype;
-        if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.N_MR1){
-            LPtype = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+            LPtype = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }else {
             LPtype = WindowManager.LayoutParams.TYPE_TOAST;
-        } else {
-            LPtype = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
         mLayoutParams.type = LPtype;
@@ -272,7 +273,7 @@ public class FloatViewUtil implements View.OnClickListener {
         }
 
 
-        mLayoutParams.format = PixelFormat.RGBA_8888;
+        mLayoutParams.format = PixelFormat.TRANSLUCENT;
 
         mWindowManager.addView(view, mLayoutParams);
 

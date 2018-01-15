@@ -113,7 +113,7 @@ public class EventFragment extends Fragment implements EventsContract.EventView{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mBind.unbind();
+//        mBind.unbind();
     }
 
     private void initRecycler() {
@@ -219,6 +219,7 @@ public class EventFragment extends Fragment implements EventsContract.EventView{
                 mRefreshLayout.setRefreshing(active);
             }
         });
+
     }
 
     @Override
