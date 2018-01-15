@@ -73,11 +73,10 @@ public class EventsActivity extends AppCompatActivity {
                                 try {
                                     Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                             Uri.parse("package:" + getPackageName()));
-                                    startActivityForResult(intent, SYSTEM_ALERT_WINDOW_REQUEST_CODE);
+                                    startActivity(intent);
                                 }catch (Exception e){
 
                                     Intent localIntent = new Intent();
-                                    localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
                                     localIntent.setData(Uri.fromParts("package", getPackageName(), null));
                                     startActivityForResult(localIntent , SYSTEM_ALERT_WINDOW_REQUEST_CODE);
@@ -95,15 +94,18 @@ public class EventsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK){
-            if (requestCode == SYSTEM_ALERT_WINDOW_REQUEST_CODE){
-                Toast.makeText(this, "你可以退出应用，然后去别的应用中进行复制文字", Toast.LENGTH_LONG).show();
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (Settings.canDrawOverlays(this)){
+
+                Toast.makeText(this, "可以退出应用，然后去别的应用中进行复制文字", Toast.LENGTH_LONG).show();
+
+            }else {
+                Toast.makeText(this, "没有允许悬浮窗权限，那我的这app还有啥亮点。。。", Toast.LENGTH_LONG).show();
+
             }
-
-        }else {
-            Toast.makeText(this, "你没有允许悬浮窗权限，那我的这app还有啥亮点。。。", Toast.LENGTH_LONG).show();
-
-        }
+        }*/
     }
 
     @Override

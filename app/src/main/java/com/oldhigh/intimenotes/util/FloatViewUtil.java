@@ -228,7 +228,8 @@ public class FloatViewUtil implements View.OnClickListener {
     private void windowManagerAddView(View view, int type) {
         mLayoutParams = new WindowManager.LayoutParams();
 
-        //这里的type要使用好，8.0的需要使用这个 TYPE_APPLICATION_OVERLAY，8.0以下的还没有测试
+        //这里的type要使用好，8.0的需要使用这个 TYPE_APPLICATION_OVERLAY，
+        // 8.0以下的现在用 TYPE_TOAST
         int LPtype;
         if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
             LPtype = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
