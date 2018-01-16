@@ -2,6 +2,8 @@ package com.oldhigh.intimenotes.util;
 
 import android.util.Log;
 
+import com.oldhigh.intimenotes.BuildConfig;
+
 import java.util.Arrays;
 
 /**
@@ -12,10 +14,14 @@ public class L {
 
 
     public static void d(String args) {
-        Log.d(Thread.currentThread().getName(), "d: "+  args);
+        if (BuildConfig.DEBUG) {
+            Log.d(Thread.currentThread().getName(), "d: " + args);
+        }
     }
 
     public static void e(Object... args) {
-        Log.e(Thread.currentThread().getName(),  Arrays.toString(args));
+        if (BuildConfig.DEBUG) {
+            Log.e(Thread.currentThread().getName(), Arrays.toString(args));
+        }
     }
 }

@@ -144,8 +144,8 @@ public class FloatViewUtil implements View.OnClickListener {
 
         mSet = new AnimatorSet();
         mSet.playTogether(
-                ObjectAnimator.ofFloat(mFloatViewImage, "scaleX", 1, 1.3f, 1),
-                ObjectAnimator.ofFloat(mFloatViewImage, "scaleY", 1, 1.3f, 1)
+                ObjectAnimator.ofFloat(mFloatViewImage, "scaleX", 1, 1.4f, 1),
+                ObjectAnimator.ofFloat(mFloatViewImage, "scaleY", 1, 1.4f, 1)
 
         );
 
@@ -160,6 +160,15 @@ public class FloatViewUtil implements View.OnClickListener {
 
         windowManagerAddView(mFloatView, FLOAT_VIEW);
 
+        //加载动画
+        mSet.playTogether(
+                ObjectAnimator.ofFloat(mFloatView, "scaleX", 0.3f, 1),
+                ObjectAnimator.ofFloat(mFloatView, "scaleY", 0.3f, 1),
+                ObjectAnimator.ofFloat(mFloatView, "alpha", 0.3f, 1)
+                );
+        mSet.setDuration(500).start();
+
+
         mEdit_content = mFloatView.findViewById(R.id.edit_content);
         RelativeLayout rl_view = mFloatView.findViewById(R.id.rl_view);
 
@@ -173,13 +182,16 @@ public class FloatViewUtil implements View.OnClickListener {
 
         text_search.setOnClickListener(this);
         view_back.setOnClickListener(this);
-        //view_bg.setOnClickListener(this);
+        view_setting.setOnClickListener(this);
 
 
         mEdit_content.setText(mNewEventBean.getContent().trim());
 
 
-        onOtherTouchListener(mFloatView , rl_view);
+        //使用这个后，需要 view_bg 但是不需要 view_bg 的点击事件了
+        onOtherTouchListener(mFloatView, rl_view);
+
+        onBackPress(mFloatView);
     }
 
     @Override
@@ -189,16 +201,13 @@ public class FloatViewUtil implements View.OnClickListener {
             case R.id.text_add:
                 RealmUtil.add(mNewEventBean);
 
-//                if (mEdit_content != null) {
-//                    mEdit_content.getText().clear();
-//                }
                 Toast.makeText(mContext, "添加成功", Toast.LENGTH_LONG).show();
 
                 break;
             case R.id.text_search:
                 if (mEdit_content != null) {
 
-                    openURlAdress(mContext , mEdit_content.getText().toString());
+                    openURlAdress(mContext, mEdit_content.getText().toString());
                 }
                 mWindowManager.removeView(mFloatView);
 
@@ -211,7 +220,7 @@ public class FloatViewUtil implements View.OnClickListener {
                 //mWindowManager.removeView(mFloatView);
                 break;*/
             case R.id.view_setting:
-                Toast.makeText(mContext, "还没加呢", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "待定", Toast.LENGTH_SHORT).show();
                 break;
 
             default:
@@ -231,9 +240,9 @@ public class FloatViewUtil implements View.OnClickListener {
         //这里的type要使用好，8.0的需要使用这个 TYPE_APPLICATION_OVERLAY，
         // 8.0以下的现在用 TYPE_TOAST
         int LPtype;
-        if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LPtype = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        }else {
+        } else {
             LPtype = WindowManager.LayoutParams.TYPE_TOAST;
         }
 
@@ -244,7 +253,7 @@ public class FloatViewUtil implements View.OnClickListener {
         if (type == FLOAT_VIEW_IMAGE) {
 
             // 设置Window flag
-            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;
+            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
             // 设置悬浮窗的长得宽
             mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -252,7 +261,7 @@ public class FloatViewUtil implements View.OnClickListener {
 
 
             mLayoutParams.gravity = Gravity.END | Gravity.TOP;
-            mLayoutParams.x = 10;
+            mLayoutParams.x = 0;
             mLayoutParams.y = ScreenUtil.statusHeight(mContext) +
                     ScreenUtil.toolBarHeight(mContext);
         }
@@ -260,7 +269,7 @@ public class FloatViewUtil implements View.OnClickListener {
         if (type == FLOAT_VIEW) {
 
             // 设置Window flag
-            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;
+            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
             // 设置悬浮窗的长得宽
             mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -361,14 +370,13 @@ public class FloatViewUtil implements View.OnClickListener {
     }
 
 
-    private   void openURlAdress(Context context, String content) {
-        Intent intent=new Intent();//创建Intent对象
+    private void openURlAdress(Context context, String content) {
+        Intent intent = new Intent();//创建Intent对象
         intent.setAction(Intent.ACTION_VIEW);//为Intent设置动作
 
 //        intent.setData(Uri.parse("https://www.google.com/search?q=" + content));//为Intent设置数据
         intent.setData(Uri.parse("https://www.baidu.com/s?ie=UTF-8&wd=" + content));//为Intent设置数据
         context.startActivity(intent);//将Intent传递给Activity
-
 
 
     }
