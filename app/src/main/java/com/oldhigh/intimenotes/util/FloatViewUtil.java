@@ -130,6 +130,67 @@ public class FloatViewUtil implements View.OnClickListener {
     }
 
     /**
+     * 创建 显示 浮动窗口
+     */
+    private void createFloatView() {
+
+        windowManagerAddView(mFloatView, FLOAT_VIEW);
+
+        //加载动画
+        if (mSet == null){
+            mSet = new AnimatorSet();
+        }
+        mSet.playTogether(
+                ObjectAnimator.ofFloat(mFloatView, "scaleX", 0.3f, 1),
+                ObjectAnimator.ofFloat(mFloatView, "scaleY", 0.3f, 1),
+                ObjectAnimator.ofFloat(mFloatView, "alpha", 0.3f, 1)
+                );
+        mSet.setDuration(400).start();
+
+
+        mEdit_content = mFloatView.findViewById(R.id.edit_content);
+        RelativeLayout rl_view = mFloatView.findViewById(R.id.rl_view);
+
+        TextView text_add = mFloatView.findViewById(R.id.text_add);
+        TextView text_search = mFloatView.findViewById(R.id.text_search);
+        //View view_bg = mFloatView.findViewById(R.id.view_bg);
+        View view_back = mFloatView.findViewById(R.id.view_back);
+        View view_setting = mFloatView.findViewById(R.id.view_setting);
+
+        text_add.setOnClickListener(this);
+
+        text_search.setOnClickListener(this);
+        view_back.setOnClickListener(this);
+        view_setting.setOnClickListener(this);
+
+
+        mEdit_content.setText(mNewEventBean.getContent().trim() );
+        mEdit_content.setSelection(mNewEventBean.getContent().trim().length() );
+
+
+        //使用这个后，需要 view_bg 但是不需要 view_bg 的点击事件了
+        onOtherTouchListener(mFloatView, rl_view);
+
+        //接收返回事件
+        ((BackRelativeLayout)mFloatView).setOnKeyEventListener(new BackRelativeLayout.OnKeyEventListener() {
+            @Override
+            public boolean onKeyEvent(KeyEvent event) {
+                L.e("key code " + event.getKeyCode());
+
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK){
+
+                    if (mFloatView.getParent() != null){
+                        removeView(mFloatView);
+                    }
+                    return true;
+                }
+                return false ;
+
+            }
+        });
+    }
+
+    /**
      * 添加动画
      *
      * @param aLong
@@ -152,47 +213,6 @@ public class FloatViewUtil implements View.OnClickListener {
         mSet.setDuration(300).start();
     }
 
-
-    /**
-     * 创建 显示 浮动窗口
-     */
-    private void createFloatView() {
-
-        windowManagerAddView(mFloatView, FLOAT_VIEW);
-
-        //加载动画
-        mSet.playTogether(
-                ObjectAnimator.ofFloat(mFloatView, "scaleX", 0.3f, 1),
-                ObjectAnimator.ofFloat(mFloatView, "scaleY", 0.3f, 1),
-                ObjectAnimator.ofFloat(mFloatView, "alpha", 0.3f, 1)
-                );
-        mSet.setDuration(500).start();
-
-
-        mEdit_content = mFloatView.findViewById(R.id.edit_content);
-        RelativeLayout rl_view = mFloatView.findViewById(R.id.rl_view);
-
-        TextView text_add = mFloatView.findViewById(R.id.text_add);
-        TextView text_search = mFloatView.findViewById(R.id.text_search);
-        //View view_bg = mFloatView.findViewById(R.id.view_bg);
-        View view_back = mFloatView.findViewById(R.id.view_back);
-        View view_setting = mFloatView.findViewById(R.id.view_setting);
-
-        text_add.setOnClickListener(this);
-
-        text_search.setOnClickListener(this);
-        view_back.setOnClickListener(this);
-        view_setting.setOnClickListener(this);
-
-
-        mEdit_content.setText(mNewEventBean.getContent().trim());
-
-
-        //使用这个后，需要 view_bg 但是不需要 view_bg 的点击事件了
-        onOtherTouchListener(mFloatView, rl_view);
-
-        onBackPress(mFloatView);
-    }
 
     @Override
     public void onClick(View v) {
@@ -268,8 +288,10 @@ public class FloatViewUtil implements View.OnClickListener {
         //浮动的输入框等
         if (type == FLOAT_VIEW) {
 
-            // 设置Window flag
-            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            // 设置Window flag FLAG_NOT_FOCUSABLE 这个去掉后，
+            // 吧下面的2个加上，可以操作 edittext 控件
+            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
 
             // 设置悬浮窗的长得宽
             mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -330,28 +352,6 @@ public class FloatViewUtil implements View.OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 添加返回事件
-     */
-    public void onBackPress(final View view) {
-        // 点击back键可消除
-        L.e("start key");
-        view.setOnKeyListener(new View.OnKeyListener() {
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                L.e("key code " + keyCode);
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_BACK:
-                        removeView(view);
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
     }
 
     /**
