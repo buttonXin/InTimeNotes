@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.oldhigh.intimenotes.R;
 import com.oldhigh.intimenotes.data.NewEventBean;
+import com.oldhigh.intimenotes.event.EventActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -229,18 +230,22 @@ public class FloatViewUtil implements View.OnClickListener {
 
                     openURlAdress(mContext, mEdit_content.getText().toString());
                 }
-                mWindowManager.removeView(mFloatView);
+                removeView(mFloatView);
 
                 break;
 
             case R.id.view_back:
-                mWindowManager.removeView(mFloatView);
+                removeView(mFloatView);
                 break;
             /*case R.id.view_bg:
                 //mWindowManager.removeView(mFloatView);
                 break;*/
             case R.id.view_setting:
-                Toast.makeText(mContext, "待定", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, EventActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+
+                removeView(mFloatView);
                 break;
 
             default:
@@ -288,10 +293,8 @@ public class FloatViewUtil implements View.OnClickListener {
         //浮动的输入框等
         if (type == FLOAT_VIEW) {
 
-            // 设置Window flag FLAG_NOT_FOCUSABLE 这个去掉后，
-            // 吧下面的2个加上，可以操作 edittext 控件
-            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                    | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+            // 设置Window flag FLAG_NOT_FOCUSABLE 这个去掉
+            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
             // 设置悬浮窗的长得宽
             mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -371,12 +374,13 @@ public class FloatViewUtil implements View.OnClickListener {
 
 
     private void openURlAdress(Context context, String content) {
-        Intent intent = new Intent();//创建Intent对象
-        intent.setAction(Intent.ACTION_VIEW);//为Intent设置动作
-
-//        intent.setData(Uri.parse("https://www.google.com/search?q=" + content));//为Intent设置数据
-        intent.setData(Uri.parse("https://www.baidu.com/s?ie=UTF-8&wd=" + content));//为Intent设置数据
-        context.startActivity(intent);//将Intent传递给Activity
+        Intent intent = new Intent();
+        //为Intent设置动作
+        intent.setAction(Intent.ACTION_VIEW);
+        //为Intent设置数据 google  or  baidu
+        //intent.setData(Uri.parse("https://www.google.com/search?q=" + content));
+        intent.setData(Uri.parse("https://www.baidu.com/s?ie=UTF-8&wd=" + content));
+        context.startActivity(intent);
 
 
     }

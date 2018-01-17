@@ -21,7 +21,7 @@ import com.oldhigh.intimenotes.util.RealmUtil;
  * Created by oldhigh on 2018/1/2.
  */
 
-public class EventsActivity extends AppCompatActivity {
+public class EventActivity extends AppCompatActivity {
 
 
     private static final int SYSTEM_ALERT_WINDOW_REQUEST_CODE = 1234;
